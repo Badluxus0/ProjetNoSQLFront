@@ -21,24 +21,7 @@ const AddForm = forwardRef(({ formData, handleChange }, ref) => {
     } catch (error) {
       console.error("Erreur lors de la récupération des pays:", error);
     }
-  };
-
-  const convertToShortDate = (date) => {
-    // Vérifie si la date est valide
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
-      throw new Error("Date invalide. Le format attendu est yyyy-mm-dd.");
-    }
-  
-    // Sépare les parties de la date
-    const [year, month, day] = date.split("-");
-  
-    // Récupère les deux derniers chiffres de l'année
-    const shortYear = year.slice(-2);
-  
-    // Retourne la date au format dd-mm-yy
-    return `${day}-${month}-${shortYear}`;
-  };
-  
+  };  
 
   useEffect(() => {
     fetchData();

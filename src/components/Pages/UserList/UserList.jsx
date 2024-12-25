@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { use, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { API_URL } from "../../../config/global.constant";
 import { Pagination } from "antd";
 import {
@@ -50,7 +50,6 @@ function UserList() {
   const handleGoClick = async () => {
     try {
       await formRef.current.validate();
-      const formDataRef = formRef.current.getData();
       // Logique à exécuter après validation réussie
     } catch (errorInfo) {
       console.log("Erreur lors de la validation :", errorInfo);
