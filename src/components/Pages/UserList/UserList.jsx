@@ -19,7 +19,6 @@ import Layout from "../Layout";
 
 function UserList() {
   const [users, setUsers] = useState([]);
-  const [error, setError] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalElements, setTotalElements] = useState(1);
@@ -194,7 +193,6 @@ function UserList() {
       console.log(response.data.data);
     } catch (error) {
       console.log(error);
-      setError("Error in getting data : " + error);
     }
   };
 
