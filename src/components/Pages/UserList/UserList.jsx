@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { API_URL } from "../../../config/global.constant";
 import { Pagination } from "antd";
 import {
@@ -188,7 +188,7 @@ function UserList() {
     }));
   };
 
-  const fetchData = async (url, setter) => {
+  const fetchData = useCallback(async (url, setter) => {
     try {
       const config = {
         headers: {
@@ -203,11 +203,11 @@ function UserList() {
     } catch (error) {
       console.log(error);
     }
-  };
+  }, [token]);
 
   useEffect(() => {
     fetchData(`${API_URL}`, setUsers);
-  }, []);
+  }, [fetchData]);
 
   const handlePagination = (
     currentPage,
