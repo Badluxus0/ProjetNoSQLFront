@@ -6,18 +6,17 @@ import {
   FaCheckCircle,
   FaEdit,
   FaPlus,
-  FaSearch,
   FaTimesCircle,
   FaTrash,
 } from "react-icons/fa";
 import { Button, Container, Modal, Toast } from "react-bootstrap";
 import AddForm from "../../Forms/AddForm";
 import EditForm from "../../Forms/EditForm";
-import Search from "./Search";
 import "./userlist.css";
 import Layout from "../Layout";
 
 function UserList() {
+  const token = localStorage.getItem("token");
   const [users, setUsers] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -26,7 +25,6 @@ function UserList() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [showSearchModal, setShowSearchModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState({});
   const [showAlert, setShowAlert] = useState(false);
   const [alertType, setAlertType] = useState("");
@@ -58,7 +56,12 @@ function UserList() {
   const handleSubmitAdd = async () => {
     try {
       console.log("Formulaire validé :", formData);
-      const response = await axios.post(`${API_URL}`, formData);
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+      const response = await axios.post(`${API_URL}`, formData, config);
       if (response.status === 201) {
         fetchData(
           `${API_URL}?page=${currentPage}&limit=${itemsPerPage}`,
@@ -82,9 +85,15 @@ function UserList() {
   const handleSubmitEdit = async () => {
     try {
       console.log("Formulaire validé :", formData);
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
       const response = await axios.put(
         `${API_URL}/${selectedUser._id}`,
-        formData
+        formData,
+        config
       );
       if (response.status === 200) {
         fetchData(
@@ -108,7 +117,12 @@ function UserList() {
 
   const handleDeleteUser = async () => {
     try {
-      await axios.delete(`${API_URL}/${selectedUser._id}`);
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+      await axios.delete(`${API_URL}/${selectedUser._id}`, config);
       fetchData(
         `${API_URL}?page=${currentPage}&limit=${itemsPerPage}`,
         setUsers
@@ -122,8 +136,6 @@ function UserList() {
       console.log("Erreur lors de la suppression de l'utilisateur :", error);
     }
   };
-
-  const handleSearch = async () => {};
 
   const handleShowAddModal = () => {
     setShowAddModal(true);
@@ -163,14 +175,6 @@ function UserList() {
     setShowDeleteModal(false);
   };
 
-  const handleShowSearchModal = () => {
-    setShowSearchModal(true);
-  };
-
-  const handleCloseSearchModal = () => {
-    setShowSearchModal(false);
-  };
-
   const handlePageChange = (page) => {
     setCurrentPage(page);
     fetchData(`${API_URL}?page=${page}&limit=${itemsPerPage}`, setUsers);
@@ -186,7 +190,12 @@ function UserList() {
 
   const fetchData = async (url, setter) => {
     try {
-      const response = await axios.get(url);
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+      const response = await axios.get(url, config);
       setter(response.data.data);
       setTotalPages(response.data.totalPages);
       setTotalElements(response.data.totalElements);
@@ -341,9 +350,6 @@ function UserList() {
             >
               Ajouter &nbsp; <FaPlus />
             </Button>
-            <Button className="btn btn-primary" onClick={handleShowSearchModal}>
-              <FaSearch />
-            </Button>
           </div>
           <div>{dataTable(users)}</div>
           <div>
@@ -408,7 +414,6 @@ function UserList() {
                 user={selectedUser}
                 formData={formData}
                 handleChange={handleChange}
-                ref={formRef}
               />
             </Modal.Body>
             <Modal.Footer>
@@ -419,7 +424,6 @@ function UserList() {
                 variant="primary"
                 onClick={() => {
                   handleSubmitEdit();
-                  handleGoClick();
                 }}
               >
                 Modifier
@@ -451,31 +455,6 @@ function UserList() {
               </Button>
               <Button variant="primary" onClick={handleDeleteUser}>
                 Supprimer
-              </Button>
-            </Modal.Footer>
-          </Modal>
-
-          <Modal
-            show={showSearchModal}
-            onHide={handleCloseSearchModal}
-            dialogClassName="custom-modal"
-            size="lg"
-            style={{ width: "100%", textAlign: "" }}
-          >
-            <Modal.Header closeButton>
-              <Modal.Title style={{ textAlign: "center" }}>
-                Rechercher utilisateur
-              </Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-              <Search />
-            </Modal.Body>
-            <Modal.Footer>
-              <Button variant="danger" onClick={handleCloseSearchModal}>
-                Fermer
-              </Button>
-              <Button variant="primary" onClick={handleSearch}>
-                Rechercher
               </Button>
             </Modal.Footer>
           </Modal>

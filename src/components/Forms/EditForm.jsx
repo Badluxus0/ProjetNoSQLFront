@@ -1,16 +1,8 @@
-import { Form, Input, Select } from "antd";
-import React, {
-  forwardRef,
-  useEffect,
-  useImperativeHandle,
-  useState,
-} from "react";
+import React, { useEffect, useState } from "react";
 import { Col, Container, Row } from "react-bootstrap";
 
-const EditForm = forwardRef(({ formData, handleChange }, ref) => {
-  const [form] = Form.useForm();
+function EditForm({ formData, handleChange }) {
   const [countries, setCountries] = useState([]);
-  const [loading, setLoading] = useState(true);
 
   const fetchData = async () => {
     try {
@@ -20,20 +12,12 @@ const EditForm = forwardRef(({ formData, handleChange }, ref) => {
       setCountries(countryNames);
     } catch (error) {
       console.error("Erreur lors de la récupération des pays:", error);
-    } finally {
-      setLoading(false);
     }
   };
 
   useEffect(() => {
     fetchData();
-    form.setFieldsValue(formData);
-  }, [formData, form]);
-
-  useImperativeHandle(ref, () => ({
-    validate: () => form.validateFields(),
-    getData: () => form.getFieldsValue(),
-  }));
+  }, []);
 
   const formatDate = (date) => {
     const [day, month, year] = date.split("-");
@@ -42,146 +26,124 @@ const EditForm = forwardRef(({ formData, handleChange }, ref) => {
 
   return (
     <Container>
-      <Form layout="vertical" name="editForm" autoComplete="off" form={form}>
-        <Row>
-          <Col>
-            <Form.Item
-              label="Type d'Abonnement"
+      <Row>
+        <Col>
+          <div className="form-group">
+            <label htmlFor="subscriptionType">Type d'Abonnement :</label>
+            <select
+              id="subscriptionType"
               name="subscriptionType"
-              rules={[
-                {
-                  required: true,
-                  message: "Veuillez choisir le type d'abonnement!",
-                },
-              ]}
+              type="text"
+              className="form-select"
+              onChange={(value) =>
+                handleChange({ target: { name: "subscriptionType", value } })
+              }
+              value={formData.subscriptionType}
             >
-              <Select
-                onChange={(value) =>
-                  handleChange({ target: { name: "subscriptionType", value } })
-                }
-              >
-                <Select.Option value="Basic">Basic</Select.Option>
-                <Select.Option value="Standard">Standard</Select.Option>
-                <Select.Option value="Premium">Premium</Select.Option>
-              </Select>
-            </Form.Item>
-
-            <Form.Item
-              label="Revenu Mensuel"
+              <option value="Basic">Basic</option>
+              <option value="Standard">Standard</option>
+              <option value="Premium">Premium</option>
+            </select>
+          </div>
+          <div className="form-group">
+            <label htmlFor="monthlyRevenue">Revenu Mensuel :</label>
+            <input
+              id="monthlyRevenue"
               name="monthlyRevenue"
-              rules={[
-                {
-                  required: true,
-                  message: "Veuillez saisir le revenu mensuel!",
-                },
-              ]}
-            >
-              <Input
-                id="monthlyRevenue"
-                name="monthlyRevenue"
-                type="text"
-                onChange={handleChange}
-                value={formData.monthlyRevenue || ""}
-              />
-            </Form.Item>
-
-            <Form.Item
-              label="Date Abonnement"
-              name="joindate"
-              rules={[
-                {
-                  required: true,
-                  message: "Veuillez choisir la date de l'abonnement!",
-                },
-              ]}
-            >
-              <Input
-                id="joinDate"
-                name="joinDate"
-                type="date"
-                onChange={handleChange}
-                value={formatDate(formData.joinDate)}
-              />
-            </Form.Item>
-
-            <Form.Item
-              label="Date Dernier Paiement"
+              type="text"
+              className="form-control"
+              onChange={handleChange}
+              value={formData.monthlyRevenue || ""}
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="joinDate">Date Abonnement :</label>
+            <input
+              id="joinDate"
+              name="joinDate"
+              type="date"
+              className="form-control"
+              onChange={handleChange}
+              value={formatDate(formData.joinDate)}
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="lastPaymentDate">Date Dernier Paiement :</label>
+            <input
+              id="lastPaymentDate"
               name="lastPaymentDate"
-              rules={[
-                {
-                  required: true,
-                  message: "Veuillez choisir la date du dernier paiement!",
-                },
-              ]}
-            >
-              <Input
-                id="lastPaymentDate"
-                name="lastPaymentDate"
-                type="date"
-                onChange={handleChange}
-                value={formatDate(formData.lastPaymentDate)}
-              />
-            </Form.Item>
-          </Col>
-
-          <Col>
-            <Form.Item
-              label="Pays"
+              type="date"
+              className="form-control"
+              onChange={handleChange}
+              value={formatDate(formData.lastPaymentDate)}
+            />
+          </div>
+        </Col>
+        <Col>
+          <div className="form-group">
+            <label htmlFor="country">Pays :</label>
+            <select
+              id="country"
               name="country"
-              rules={[{ required: true, message: "Veuillez choisir le pays!" }]}
+              type="text"
+              className="form-select"
+              onChange={(value) =>
+                handleChange({ target: { name: "country", value } })
+              }
+              value={formData.country}
             >
-              <Select
-                loading={loading}
-                onChange={(value) =>
-                  handleChange({ target: { name: "country", value } })
-                }
-                value={formData.country}
-              >
-                {countries.map((country) => (
-                  <Select.Option key={country} value={country}>
-                    {country}
-                  </Select.Option>
-                ))}
-              </Select>
-            </Form.Item>
-
-            <Form.Item
-              label="Age"
+              {countries.map((country) => (
+                <option key={country} value={country}>
+                  {country}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="form-group">
+            <label htmlFor="age">Age :</label>
+            <input
+              id="age"
               name="age"
-              rules={[{ required: true, message: "Veuillez saisir l'age!" }]}
+              type="text"
+              className="form-control"
+              onChange={handleChange}
+              value={formData.age || ""}
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="gender">Genre :</label>
+            <select
+              className="form-select"
+              onChange={(value) =>
+                handleChange({ target: { name: " gender", value } })
+              }
+              value={formData.gender}
             >
-              <Input type="text" onChange={handleChange} />
-            </Form.Item>
-
-            <Form.Item
-              label="Genre"
-              name="gender"
-              rules={[
-                { required: true, message: "Veuillez choisir le genre!" },
-              ]}
-            >
-              <Select
-                onChange={(value) =>
-                  handleChange({ target: { name: "gender", value } })
-                }
-              >
-                <Select.Option value="Male">Male</Select.Option>
-                <Select.Option value="Female">Female</Select.Option>
-              </Select>
-            </Form.Item>
-
-            <Form.Item
-              label="Appareil"
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+            </select>
+          </div>
+          <div className="form-group">
+            <label htmlFor="device">Appareil :</label>
+            <select
               name="device"
-              rules={[{ required: true, message: "Veuillez saisir l'objet!" }]}
+              id="device"
+              className="form-select"
+              value={formData.device}
+              onChange={(value) =>
+                handleChange({ target: { name: "device", value } })
+              }
             >
-              <Input type="text" onChange={handleChange} />
-            </Form.Item>
-          </Col>
-        </Row>
-      </Form>
+              <option value="Smartphone">Smartphone</option>
+              <option value="Tablet">Tablet</option>
+              <option value="Desktop">Desktop</option>
+              <option value="Smart TV">Smart TV</option>
+            </select>
+          </div>
+        </Col>
+      </Row>
     </Container>
   );
-});
+}
 
 export default EditForm;

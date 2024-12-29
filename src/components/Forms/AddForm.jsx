@@ -15,7 +15,6 @@ const AddForm = forwardRef(({ formData, handleChange }, ref) => {
     try {
       const response = await fetch("https://restcountries.com/v3.1/all");
       const data = await response.json();
-
       const countryNames = data.map((country) => country.name.common);
       setCountries(countryNames);
     } catch (error) {
